@@ -18,7 +18,10 @@
   },
   "homepage": "https://github.com/antirek/yealink-ws-demo#readme",
   "dependencies": {
+    "axios": "^0.18.0",
     "express": "^4.16.4",
-    "websocket": "^1.0.28"
+    "pug": "^2.0.3",
+    "websocket": "^1.0.28",
+    "ws": "^6.1.0"
   }
 }
