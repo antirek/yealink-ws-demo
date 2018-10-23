@@ -5,50 +5,32 @@ const axios = require('axios');
 
 //app.get('/', (req, res) => res.send('Hello World!'))
 
-var WebSocketClient = require('websocket').client;
- 
-var client = new WebSocketClient();
- 
-var conn;
+const WebSocket = require('ws');
 
-client.on('connectFailed', (error) => {
-    console.log('Connect Error: ' + error.toString());
+const ws = new WebSocket('ws://localhost:3007/');
+
+ws.on('open', function () {
+  ws.send('something');
 });
- 
-client.on('connect', (connection) => {
-    console.log('WebSocket Client Connected');
-    conn = connection;
 
-    connection.on('error', (error) => {
-        console.log("Connection Error: " + error.toString());
-    });
-    connection.on('close', () => {
-        console.log('echo-protocol Connection Closed');
-    });
-    connection.on('message', (message) => {
-        if (message.type === 'utf8') {
-            console.log("Received: '" + message.utf8Data + "'");
+ws.on('message', function (data) {
+  console.log(data);
 
-            let number = message.utf8Data;
-            let url = 'http://admin:admin@192.168.241.41/servlet?number=' + number + '&outgoing_uri=2';
-            axios.get(url)
-                .then((response) => {
-                    console.log(response)
-                });
-        }
-    });
+  let number = data;
+  let url = 'http://admin:admin@192.168.241.41/servlet?number=' + number + '&outgoing_uri=2';
+  axios.get(url)
+      .then((response) => {
+          console.log(response)
+      });
 });
- 
-client.connect('ws://localhost:3007/', 'echo-protocol');
 
 app.get('/event/:id', (req, res) => {
     res.send('OK');
     console.log('get', req.query);
     console.log('param', req.params.id);
     
-    conn.sendUTF(JSON.stringify({event: req.params.id, data: req.query}));
+    ws.send(JSON.stringify({event: req.params.id, data: req.query}));
 })
-
 
 app.post('/event', (req, res) => {
     res.send('OK');
