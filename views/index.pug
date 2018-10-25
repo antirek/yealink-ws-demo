@@ -6,12 +6,17 @@ html
     h1= message
     div
       input#number(type=text)
-      a#call(href='#') Call
+      button#call(type="button") Call
+      div#keys
+        form 
+          for key in keys
+            button.action(type="button")= key.value
     div#log
+
 
   script.
     $(document).ready(function(){
-        
+
         var socket = new WebSocket("ws://192.168.241.14:3006");
 
         socket.onmessage = function (event) {
@@ -19,11 +24,16 @@ html
         }
 
         $('#call').click(function(evt) {
-            console.log('clicke')
             var number = $('#number').val();
-            console.log(number)
-            console.log(socket)
+            //console.log(number)
+            //console.log(socket)
             socket.send(number.toString());
+        })
+
+        $('.action').click(function(evt) {
+            var action = evt.target.innerHTML;
+            console.log(action)
+            socket.send(action.toString());
         })
     });
     
