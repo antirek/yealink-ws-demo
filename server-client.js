@@ -7,6 +7,10 @@ const keys = require('./action_uri')
 
 app.set('view engine', 'pug')
 
+app.get('/links', (req, res) => {
+  res.render('links', {});
+})
+
 app.get('/', (req, res) => {
   res.render('index', {title: 'Hello World!', keys});
 })
