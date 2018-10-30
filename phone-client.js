@@ -13,7 +13,7 @@ const ws = new WSCLIENT('ws://localhost:3007/', {
 
 ws.start();
 ws.on('open', () => {
-  ws.send('something');
+  ws.socket.send('something');
 });
 
 ws.on("reconnect", () =>{
@@ -39,14 +39,19 @@ ws.on('message', (data) => {
       console.log('action key');
       let key = action.key;
       url = phoneUrl + 'key=' + key;
+      console.log('url:', url);
       axios.get(url)
         .then((response) => {
             console.log(response.data);
+        })
+        .catch(err => {
+          console.log(err);
         });
       break;
     case 'info':
       console.log('action info');
       url = phoneUrl + 'phonecfg=get&accounts=1&dnd=1&fw=1';
+      console.log('url:', url);
       axios.get(url)
         .then((response) => {
             console.log(response.data);
@@ -55,10 +60,13 @@ ws.on('message', (data) => {
             return info
         })
         .then((info) => {
-            ws.send(JSON.stringify({
+            ws.socket.send(JSON.stringify({
               type: 'infoResponse',
               info
             }));
+        })
+        .catch(err => {
+          console.log(err);
         });
       break;
     case 'call':
@@ -66,9 +74,13 @@ ws.on('message', (data) => {
       let number = action.number;
       if (!number) { return }
       url = phoneUrl + 'number=' + number + '&outgoing_uri=2';
+      console.log('url:', url);
       axios.get(url)
         .then((response) => {
             console.log(response.data)
+        })
+        .catch(err => {
+          console.log(err);
         });
       break;
     default:
@@ -79,14 +91,13 @@ ws.on('message', (data) => {
 const app = express()
 const port = 3000
 
-app.get('/event/:id', (req, res) => {
+app.get('/event', (req, res) => {
     res.send('OK');
     console.log('get', req.query);
-    console.log('param', req.params.id);
-    
-    ws.send(JSON.stringify({
-      type: 'event', 
-      event: req.params.id, 
+
+    ws.socket.send(JSON.stringify({
+      type: 'event',
+      event: req.query.event, 
       data: req.query
     }));
 })

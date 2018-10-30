@@ -7,6 +7,7 @@ html
     div
       input#number(type=text)
       button#call(type="button") Call
+      button#info(type="button") Info
       div#keys
         form 
           for key in keys
@@ -20,20 +21,29 @@ html
         var socket = new WebSocket("ws://192.168.241.14:3006");
 
         socket.onmessage = function (event) {
-            $('#log').append('<br/>' + event.data);
+            $('#log').append('<br/> >> ' + event.data);
         }
 
         $('#call').click(function(evt) {
             var number = $('#number').val();
             //console.log(number)
             //console.log(socket)
-            socket.send(number.toString());
+            var command = JSON.stringify({type: 'call', number: number.toString()})
+            $('#log').append('<br/> << ' + command);
+            socket.send(command);
+        })
+
+        $('#info').click(function(evt) {
+            var command = JSON.stringify({type: 'info'});
+            $('#log').append('<br/> << ' + command);
+            socket.send(command);
         })
 
         $('.action').click(function(evt) {
             var action = evt.target.innerHTML;
-            console.log(action)
-            socket.send(action.toString());
+            var command = JSON.stringify({type: 'key', key: action.toString()});
+            $('#log').append('<br/> << ' + command);
+            socket.send(command);
         })
     });
     
