@@ -5,7 +5,9 @@
   "main": "client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start-server": "node server.js",
+    "start-phone-client": "node phone-client.js",
+    "start-web": "node server-client.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +20,7 @@
   },
   "homepage": "https://github.com/antirek/yealink-ws-demo#readme",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "config": "^2.0.1",
     "express": "^4.16.4",
     "ini": "^1.3.5",
